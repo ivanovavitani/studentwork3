@@ -1,15 +1,14 @@
 import os
-os.environ['PROJ_LIB'] = 'C:\anaconda\pkgs\proj-6.2.1-h9f7ef89_0\Library\share\proj'
-os.environ['GDAL_DATA'] = 'C:\anaconda\pkgs\proj-6.2.1-h9f7ef89_0\Library\share'
+os.environ['GDAL_DATA'] = 'C:\PROGRA~1\QGIS3~1.16\share\gdal' #Путь к gdal и proj.db
+os.environ['PROJ_LIB'] = 'C:\PROGRA~1\QGIS3~1.16\share\proj'
 import osr
-import gdal
 import ogr
 
 # Заполнение слоя с точками атрибутами
-def points_creator(input_layer, X, Y, district, address, pupils, floors, teachers):
+def points_creator(input_layer, x, y, district, address, pupils, floors, teachers):
     feature = ogr.Feature(input_layer.GetLayerDefn())
     point = ogr.Geometry(ogr.wkbPoint)
-    point.AddPoint(Y,X)
+    point.AddPoint(y,x)
     feature.SetGeometry(point)
     feature.SetField("district", district)
     feature.SetField("address", address)
@@ -19,23 +18,29 @@ def points_creator(input_layer, X, Y, district, address, pupils, floors, teacher
     input_layer.CreateFeature(feature)
     feature.Destroy()
 
-# Создание слоя shp с точками
+#Создание слоя shp с точками
 def points_shp_creator():
-    dir = 'C:\PythonWorks3'
+    dir = 'C://PythonWorks3//'
     driver = ogr.GetDriverByName("ESRI Shapefile")
-    ds = driver.CreateDataSource(dir + '\my_points.shp')
+    ds = driver.CreateDataSource(dir + 'my_points.shp')
     srs = osr.SpatialReference()
     srs.ImportFromEPSG(4326)
     layer = ds.CreateLayer('Schools', srs, ogr.wkbPoint)
-    field_name = ogr.FieldDefn("district", ogr.OFTString)
-    field_name.SetWidth(50)
-    layer.CreateField(field_name)
-    field_name = ogr.FieldDefn("address", ogr.OFTString)
-    field_name.SetWidth(100)
-    layer.CreateField(field_name)
-    layer.CreateField(ogr.FieldDefn("pupils", ogr.OFTInteger))
-    layer.CreateField(ogr.FieldDefn("floors", ogr.OFTInteger))
-    layer.CreateField(ogr.FieldDefn("teachers", ogr.OFTInteger))
+    first_name = ogr.FieldDefn("district", ogr.OFTString)
+    first_name.SetWidth(50)
+    layer.CreateField(first_name)
+    second_name = ogr.FieldDefn("address", ogr.OFTString)
+    second_name.SetWidth(100)
+    layer.CreateField(second_name)
+    third_name = ogr.FieldDefn("pupils", ogr.OFTInteger)
+    third_name.SetWidth(2)
+    layer.CreateField(third_name)
+    fourth_name = ogr.FieldDefn("floors", ogr.OFTInteger)
+    fourth_name.SetWidth(2)
+    layer.CreateField(fourth_name)
+    fifth_name = ogr.FieldDefn("teachers", ogr.OFTInteger)
+    fifth_name.SetWidth(2)
+    layer.CreateField(fifth_name)
     points_creator(layer, 60.021175, 30.379414, "Kalininskij", "ul. Akademika Konstantinova, 10, korp. 2", 1400, 2, 60)
     points_creator(layer, 59.955766, 30.472748, "Krasnogvardejskij", "Irinovskij prosp., 23, korp. 2", 800, 4, 54)
     points_creator(layer, 60.001847, 30.286718, "Primorskij", "Bogatyrskij prosp., 7, korp. 4", 1214, 2, 75)
@@ -47,42 +52,49 @@ def points_shp_creator():
     points_creator(layer, 59.943811, 30.281927, "Vasileostrovskij", "Srednij prosp. Vasil'evskogo ostrova, 20", 876, 3, 52)
     points_creator(layer, 60.039321, 30.327426, "Vyborgskij", "prosp. Engel'sa, 115, korp. 2", 1342, 2, 64)
 
-# Заполнение слоя с полигонами атрибутами
-def poligons_creator(input_layer, X1, Y1, X2, Y2, X3, Y3, X4, Y4, address, district, fence, hours, school):
+
+#Заполнение слоя с полигонами атрибутами
+def poligons_creator(input_layer, x1, y1, x2, y2, x3, y3, x4, y4, address, district, fence, hours, school):
     feature = ogr.Feature(input_layer.GetLayerDefn())
     geom = ogr.Geometry(ogr.wkbLinearRing)
-    geom.AddPoint(Y1, X1)
-    geom.AddPoint(Y2, X2)
-    geom.AddPoint(Y3, X3)
-    geom.AddPoint(Y4, X4)
+    geom.AddPoint(y1, x1)
+    geom.AddPoint(y2, x2)
+    geom.AddPoint(y3, x3)
+    geom.AddPoint(y4, x4)
     poligon = ogr.Geometry(ogr.wkbPolygon)
     poligon.AddGeometry(geom)
     feature.SetGeometry(poligon)
-    feature.SetField("school address", address)
+    feature.SetField("address", address)
     feature.SetField("district", district)
-    feature.SetField("fence height", fence)
-    feature.SetField("opening hours", hours)
-    feature.SetField("school number", school)
+    feature.SetField("fence", fence)
+    feature.SetField("hours", hours)
+    feature.SetField("school", school)
     input_layer.CreateFeature(feature)
     feature.Destroy()
 
-# Создание слоя shp с полигонами
+#Создание слоя shp с полигонами
 def polygons_shp_creator():
     dir = 'C:\PythonWorks3'
     driver = ogr.GetDriverByName("ESRI Shapefile")
-    ds = driver.CreateDataSource(dir + '\my_poligons.shp')
+    ds = driver.CreateDataSource(dir + '/my_poligons.shp')
     srs = osr.SpatialReference()
     srs.ImportFromEPSG(4326)
     layer = ds.CreateLayer('Stadiums', srs, ogr.wkbPolygon)
-    field_name = ogr.FieldDefn("address", ogr.OFTString)
-    field_name.SetWidth(150)
-    layer.CreateField(field_name)
-    field_name = ogr.FieldDefn("district", ogr.OFTString)
-    field_name.SetWidth(50)
-    layer.CreateField(field_name)
-    layer.CreateField(ogr.FieldDefn("fence", ogr.OFTInteger))
-    layer.CreateField(ogr.FieldDefn("hours", ogr.OFTInteger))
-    layer.CreateField(ogr.FieldDefn("school", ogr.OFTInteger))
+    first_polygon_name = ogr.FieldDefn("address", ogr.OFTString)
+    first_polygon_name.SetWidth(150)
+    layer.CreateField(first_polygon_name)
+    second_polygon_name = ogr.FieldDefn("district", ogr.OFTString)
+    second_polygon_name.SetWidth(50)
+    layer.CreateField(second_polygon_name)
+    third_polygon_name = ogr.FieldDefn("fence", ogr.OFTInteger)
+    third_polygon_name.SetWidth(2)
+    layer.CreateField(third_polygon_name)
+    fourth_polygon_name = ogr.FieldDefn("hours", ogr.OFTInteger)
+    fourth_polygon_name.SetWidth(2)
+    layer.CreateField(fourth_polygon_name)
+    firth_polygon_name = ogr.FieldDefn("school", ogr.OFTInteger)
+    firth_polygon_name.SetWidth(2)
+    layer.CreateField(firth_polygon_name)
     poligons_creator(layer, 59.958335, 30.225663, 59.958242, 30.226302, 59.958881, 30.226662, 59.958970, 30.226019, 'ul. Korablestroitelej, 42k2', 'Vasileostrovskij', 3, 13, 10)
     poligons_creator(layer, 59.998158, 30.214334, 59.998473, 30.214477, 59.998663, 30.213107, 59.998323, 30.212812, "Mebel'naya ul, 21, k3", 'Primorskij', 2, 14, 630)
     poligons_creator(layer, 59.985317, 30.208577, 59.985153, 30.209856, 59.984809, 30.209680, 59.984970, 30.208397, 'Primorskij prospekt, 143k3', 'Primorskij', 3, 24, 601)
