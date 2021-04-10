@@ -1,8 +1,6 @@
 import os
-os.environ['GDAL_DATA'] = 'C:\PROGRA~1\QGIS3~1.16\share\gdal' #Путь к gdal и proj.db
-os.environ['PROJ_LIB'] = 'C:\PROGRA~1\QGIS3~1.16\share\proj'
-import osr
-import ogr
+from osgeo import osr
+from osgeo import ogr
 
 # Заполнение слоя с точками атрибутами
 def points_creator(input_layer, x, y, district, address, pupils, floors, teachers):
